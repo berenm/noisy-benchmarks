@@ -33,6 +33,14 @@
 # define SHOOTOUT_MALLOC(type_m)          malloc(sizeof(type_m))
 # define SHOOTOUT_FREE(type_m, pointer_m) free(pointer_m)
 
+#elif defined(SHOOTOUT_BPOOL)
+
+# include <boost/pool/pool_alloc.hpp>
+
+# define SHOOTOUT_OUTPUT "bpool"
+# define SHOOTOUT_MALLOC(type_m)          boost::fast_pool_allocator< type_m, boost::default_user_allocator_malloc_free, boost::details::pool::null_mutex, 1024 >::allocate()
+# define SHOOTOUT_FREE(type_m, pointer_m) boost::fast_pool_allocator< type_m, boost::default_user_allocator_malloc_free, boost::details::pool::null_mutex, 1024 >::deallocate((type_m*) pointer_m)
+
 #elif defined(SHOOTOUT_EMPTY)
 
 # define SHOOTOUT_OUTPUT "empty"
@@ -51,7 +59,7 @@ typedef struct {
   char data[SHOOTOUT_SIZE];
 } AllocatedType;
 
-__inline__ uint64_t get_ticks(void) {
+static inline uint64_t get_ticks(void) {
   uint32_t lo, hi;
 
   __asm__ __volatile__ (
@@ -90,37 +98,37 @@ static void deallocate(uint64_t count, void** allocated, uint64_t* ticks) {
 
 int main(int argc, char const* argv[]) {
   uint64_t  count     = atoi(argv[1]);
-  uint64_t* ticks     = malloc((count + 1) * sizeof(uint64_t));
-  void**    allocated = malloc(count * sizeof(void*));
-
-  FILE* results = fopen("results/" SHOOTOUT_OUTPUT, "w");
+  uint64_t* alticks   = (uint64_t*) malloc((count + 1) * sizeof(uint64_t));
+  uint64_t* deticks   = (uint64_t*) malloc((count + 1) * sizeof(uint64_t));
+  void**    allocated = (void**) malloc(count * sizeof(void*));
 
   uint64_t total  = 0;
   uint64_t before = get_ticks();
 
-  allocate(count, allocated, ticks);
+  allocate(count, allocated, alticks);
   uint64_t after = get_ticks();
 
   total += after - before;
-  fprintf(results, "total_alloc %lf\n", ticks_to_ns(after - before));
+  printf("total_alloc %lf\n", ticks_to_ns(after - before));
   for (uint64_t i = 0; i < count; ++i) {
-    fprintf(results, "alloc %lu %lf\n", i, ticks_to_ns(ticks[i + 1] - ticks[i]));
+    printf("alloc %lu %lf\n", i, ticks_to_ns(alticks[i + 1] - alticks[i]));
   }
 
   before = get_ticks();
-  deallocate(count, allocated, ticks);
+  deallocate(count, allocated, deticks);
   after = get_ticks();
 
   total += after - before;
-  fprintf(results, "total_dealloc %lf\n", ticks_to_ns(after - before));
+  printf("total_dealloc %lf\n", ticks_to_ns(after - before));
   for (uint64_t i = 0; i < count; ++i) {
-    fprintf(results, "dealloc %lu %lf\n", i, ticks_to_ns(ticks[i + 1] - ticks[i]));
+    printf("dealloc %lu %lf\n", i, ticks_to_ns(deticks[i + 1] - deticks[i]));
   }
 
-  free(ticks);
+  free(alticks);
+  free(deticks);
   free(allocated);
 
-  fclose(results);
+  fclose(stderr);
 
   printf("%lf\n", ticks_to_ns(total));
   sleep(5);

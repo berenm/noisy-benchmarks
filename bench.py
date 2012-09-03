@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
+
 import sys, os, subprocess, signal
 import time
 
 programs = [
+    'empty',
     'gslice',
-    'tcmalloc',
+    'bpool',
     'jemalloc',
     'malloc',
-    'empty',
+    'tcmalloc',
 ]
 
-minallocs   =  4*1024
-maxallocs   =  4*1024
+minallocs   =  10*1024
+maxallocs   =  10*1024
 interval    =  2
 best_out_of =  1
 
@@ -41,7 +44,7 @@ for allocsize in allocsizes:
             fastest_attempt_data = ''
 
             for attempt in range(best_out_of):
-                command = ['make', '-B', 'SHOOTOUT_COUNT=%d' % nkeys,  'results/' + program]
+                command = ['make', '-B', 'SHOOTOUT_COUNT=%d' % (nkeys),  'results/' + program]
                 print '>> ', ' '.join(command)
                 proc = subprocess.Popen(command, stdout=subprocess.PIPE)
 
@@ -62,20 +65,45 @@ for allocsize in allocsizes:
 
                 with open('results/%d-%s.plot' % (allocsize, program), 'w') as plot:
                     print >>plot, '''
-set terminal pngcairo enhanced fontscale 1.0 size 4096, 1024 
+set terminal pngcairo enhanced fontscale 1.0 size 4096, 1024
 set output 'results/%d-%s.png'
 
+unset colorbox
+
+set palette positive nops_allcF maxcolors 0 gamma 1.0 color model HSV
+set palette defined ( 0 0 1 1, 0.1 1 1 1, 0.2 0 0.75 1, 0.3 1 0.75 1, 0.4 0 0.5 1, 0.5 1 0.5 1, 0.6 0 0.25 1, 0.7 1 0.25 1, 0.8 0 0 1, 1 1 0 1 )
+
+set auto x
+set format y "10^{%%L}"
+
+set ytics nomirror
+set grid ytics xtics
+
+set yrange [0.01:100000000]
+#set xrange [0:5]
 set logscale y
-set yrange [1:10000000]
-plot '< cat results/%s | grep ^alloc' using 2:3 with lines, \\
-     '< cat results/%s | grep ^dealloc' using 2:3 with lines''' % (allocsize, program, program, program)
+
+set title "Timings"
+set ylabel "time taken in nanosecond"
+set xlabel "time elapsed in µseconds"
+
+t=0
+timeof(y,x)=(t=t+x)/1000000''' % (allocsize, program)
+                    if 'empty' in program:
+                        print >>plot, '''
+plot '< cat results/%s | grep ^alloc' using 2:3:(log10($3/10)**2/5.0) with lp pt 7 ps variable lw 0.05, \\
+     '< cat results/%s | grep ^dealloc' using 2:3:(log10($3/10)**2/5.0) with lp pt 7 ps variable lw 0.05''' % (program, program)
+                    else:
+                        print >>plot, '''
+plot '< paste results/%s results/empty | grep ^alloc' using 2:($3/$6):(log10($3/$6)**2/5.0) with lp pt 7 ps variable lw 0.05, \\
+     '< paste results/%s results/empty | grep ^dealloc' using 2:($3/$6):(log10($3/$6)**2/5.0) with lp pt 7 ps variable lw 0.05''' % (program, program)
 
                 command = ['gnuplot', 'results/%d-%s.plot' % (allocsize, program)]
                 print '>> ', ' '.join(command)
                 subprocess.check_call(command)
 
                 if nbytes and runtime: # otherwise it crashed
-                    line = ','.join(map(str, [benchtype, nkeys, program, nbytes, "%0.6f" % runtime]))
+                    line = ','.join(map(str, [benchtype, (nkeys), program, nbytes, "%0.6f" % runtime]))
 
                     if runtime < fastest_attempt:
                         fastest_attempt = runtime

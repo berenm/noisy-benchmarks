@@ -1,0 +1,27 @@
+set terminal pngcairo enhanced fontscale 1.0 size 4096, 1024
+set output '@SHOOTOUT_PLOT_OUTPUT@.png'
+
+unset colorbox
+
+set palette positive nops_allcF maxcolors 0 gamma 1.0 color model HSV
+set palette defined ( 0 0 1 1, 0.1 1 1 1, 0.2 0 0.75 1, 0.3 1 0.75 1, 0.4 0 0.5 1, 0.5 1 0.5 1, 0.6 0 0.25 1, 0.7 1 0.25 1, 0.8 0 0 1, 1 1 0 1 )
+
+set auto x
+set format y "10^{%L}"
+
+set ytics nomirror
+set grid ytics xtics
+
+set yrange [0.1:100000000]
+# set xrange [0:5]
+set logscale y
+
+set title "Timings"
+set ylabel "time taken in nanosecond"
+set xlabel "time elapsed in µseconds"
+
+t=0
+timeof(y,x)=(t=t+x)/1000000 % (nkeys, program)
+
+plot '< cat @SHOOTOUT_PLOT_OUTPUT@.dat | grep ^alloc' using 2:3:(log10($3/10)**2/5.0) with lp pt 7 ps variable lw 0.05, \
+     '< cat @SHOOTOUT_PLOT_OUTPUT@.dat | grep ^dealloc' using 2:3:(log10($3/10)**2/5.0) with lp pt 7 ps variable lw 0.05
