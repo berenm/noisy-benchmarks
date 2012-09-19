@@ -68,6 +68,7 @@ namespace shootout {
       std::clog << "warming up... ";
 
       cpu_set_t cpus;
+
       CPU_ZERO(&cpus);
       CPU_SET(1, &cpus);
       sched_setaffinity(0, 1, &cpus);
@@ -95,7 +96,7 @@ namespace shootout {
 
       this->ticks_per_nanoseconds = static_cast< double >(ticks_to - ticks_from - this->cpuid_overhead) / (static_cast< double >(time_end.tv_sec - time_start.tv_sec) * 1000 * 1000 * 1000 + (time_end.tv_nsec - time_start.tv_nsec));
       this->ticks_origin          = ticks_to;
-      this->cpuid_overhead        = this->cpuid_overhead * 4 / 5;
+      this->cpuid_overhead        = this->cpuid_overhead * 1 / 2;
       std::clog << "done,"
                 << " cpuid overhead: " << this->cpuid_overhead
                 << " ticks origin: " << this->ticks_origin

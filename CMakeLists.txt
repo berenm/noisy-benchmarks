@@ -72,7 +72,21 @@ add_benchmark(alloc pool LIBRARIES :libtcmalloc.so.4)
 add_plots(alloc pool ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
 
 
+add_benchmark(hash empty)
+add_plots(hash empty ns-per-iteration STEPS insert remove)
 
+include_directories(bplus-tree-v2/include bplus-tree-v2/src)
+add_benchmark(hash bplus LIBRARIES ${GLIB2_LIBRARIES})
+add_plots(hash bplus ns-per-iteration STEPS insert remove)
+
+add_benchmark(hash brute)
+add_plots(hash brute ns-per-iteration STEPS insert remove)
+
+add_benchmark(hash glib LIBRARIES ${GLIB2_LIBRARIES})
+add_plots(hash glib ns-per-iteration STEPS insert remove)
+
+add_benchmark(hash sparse)
+add_plots(hash sparse ns-per-iteration STEPS insert remove)
 
 # build/hash-glib: build
 #   $(CC) src/hashtable.c -o build/hash-glib -Dnoisy_GLIB $(OPTIMIZE) $(LINK) -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT -std=gnu99 -D_NDEBUG `pkg-config --cflags --libs glib-2.0`
