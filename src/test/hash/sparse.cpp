@@ -13,12 +13,12 @@ namespace shootout {
       hash.set_deleted_key(static_cast< std::uint64_t >(-1));
     }
 
-    void insert(std::uint64_t key, void* value) {
-      hash.insert(hash_t::value_type(key, value));
+    void insert(hash_data* data) {
+      hash.insert(hash_t::value_type(data->key, data->value));
     }
 
-    void remove(std::uint64_t key, void* value) {
-      hash.erase(key);
+    void remove(hash_data const* data) {
+      hash.erase(data->key);
     }
 
   }

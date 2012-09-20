@@ -12,18 +12,16 @@ namespace shootout {
 
     void init() {}
 
-    void insert(std::uint64_t key, void* value) {
-      HashLink* link = reinterpret_cast< HashLink* >(value);
+    void insert(hash_data* data) {
+      HashLink* link = reinterpret_cast< HashLink* >(data);
 
-      link->key.data[0]     = key;
-      link->key.data_length = 1;
       HashTableInsert(hash, link);
     }
 
-    void remove(std::uint64_t key, void* value) {
-      HashLink* link = reinterpret_cast< HashLink* >(value);
+    void remove(hash_data const* data) {
+      HashLink const* link = reinterpret_cast< HashLink const* >(data);
 
-      HashTableRemove(hash, link);
+      HashTableRemove(hash, const_cast< HashLink* >(link));
     }
 
   }

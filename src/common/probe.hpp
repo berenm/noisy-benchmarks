@@ -85,6 +85,7 @@ namespace shootout {
         std::size_t cpuid_overhead;
 
         typedef std::map< std::string, std::shared_ptr< std::ostream > > stream_map_t;
+
         stream_map_t streams;
         std::string  output_prefix;
     };

@@ -31,7 +31,7 @@ int main(int argc, char const* argv[]) {
 
   for (std::size_t i = 0; i < iterations; ++i) {
     hash_datas[i].key = key_distribution(random_generator);
-    memset(hash_datas[i].value, 0, sizeof(hash_datas[i].value));
+    memset(hash_datas[i].value, 1, sizeof(hash_datas[i].value));
   }
 
   for (shootout::test::hash_data* hash_data = hash_datas; hash_data != hash_datas + iterations; ++hash_data) {
@@ -40,7 +40,7 @@ int main(int argc, char const* argv[]) {
 
     {
       shootout::common::scoped_probe probe(0);
-      shootout::test::insert(hash_data->key, hash_data->value);
+      shootout::test::insert(hash_data);
     }
   }
 
@@ -51,7 +51,7 @@ int main(int argc, char const* argv[]) {
 
     {
       shootout::common::scoped_probe probe(1);
-      shootout::test::remove(hash_data->key, hash_data->value);
+      shootout::test::remove(hash_data);
     }
   }
 

@@ -4,8 +4,8 @@ namespace shootout {
   namespace test {
 
     void init() {}
-    void insert(std::uint64_t key, void* value) {}
-    void remove(std::uint64_t key, void* value) {}
+    void insert(hash_data* data) {}
+    void remove(hash_data const* data) {}
 
   }
 }

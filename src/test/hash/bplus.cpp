@@ -8,8 +8,8 @@ namespace shootout {
     static BplusTree* hash = bplus_tree_new();
 
     void init() {}
-    void insert(std::uint64_t key, void* value) { bplus_tree_insert(hash, reinterpret_cast< BplusKey >(key), value); }
-    void remove(std::uint64_t key, void* value) { bplus_tree_remove(hash, reinterpret_cast< BplusKey >(key)); }
+    void insert(hash_data* data) { bplus_tree_insert(hash, reinterpret_cast< BplusKey >(data->key), data->value); }
+    void remove(hash_data const* data) { bplus_tree_remove(hash, reinterpret_cast< BplusKey >(data->key)); }
 
   }
 }

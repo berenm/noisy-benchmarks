@@ -58,8 +58,8 @@ namespace shootout {
           this->streams[name] = std::make_shared< std::ofstream >(file_name + ".dat", std::ios_base::out);
         }
 
-        std::int64_t const nanoseconds_since_origin = (item.ticks_start - this->ticks_origin) / this->ticks_per_nanoseconds;
-        std::int64_t const nanoseconds_duration     = (item.ticks_end - item.ticks_start - this->cpuid_overhead) / this->ticks_per_nanoseconds;
+        std::int64_t const nanoseconds_since_origin = (item.ticks_start - static_cast< std::int64_t >(this->ticks_origin)) / this->ticks_per_nanoseconds;
+        std::int64_t const nanoseconds_duration     = (static_cast< std::int64_t >(item.ticks_end - item.ticks_start) - static_cast< std::int64_t >(this->cpuid_overhead)) / this->ticks_per_nanoseconds;
         (*this->streams[name]) << item.sequence << " " << nanoseconds_since_origin << " " << nanoseconds_duration << std::endl;
       }
     }

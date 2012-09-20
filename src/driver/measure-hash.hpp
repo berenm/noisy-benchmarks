@@ -8,13 +8,14 @@ namespace shootout {
   namespace test {
 
     struct hash_data {
+      hash_data*    hash_next;
       std::uint64_t key;
       char          value[256];
     };
 
     void init();
-    void insert(std::uint64_t key, void* value);
-    void remove(std::uint64_t key, void* value);
+    void insert(hash_data* data);
+    void remove(hash_data const* data);
 
   }
 }
