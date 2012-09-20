@@ -58,8 +58,8 @@ namespace shootout {
           this->streams[name] = std::make_shared< std::ofstream >(file_name + ".dat", std::ios_base::out);
         }
 
-        std::size_t const nanoseconds_since_origin = (item.ticks_start - this->ticks_origin) / this->ticks_per_nanoseconds;
-        std::size_t const nanoseconds_duration     = (item.ticks_end - item.ticks_start - this->cpuid_overhead) / this->ticks_per_nanoseconds;
+        std::int64_t const nanoseconds_since_origin = (item.ticks_start - this->ticks_origin) / this->ticks_per_nanoseconds;
+        std::int64_t const nanoseconds_duration     = (item.ticks_end - item.ticks_start - this->cpuid_overhead) / this->ticks_per_nanoseconds;
         (*this->streams[name]) << item.sequence << " " << nanoseconds_since_origin << " " << nanoseconds_duration << std::endl;
       }
     }
@@ -96,7 +96,7 @@ namespace shootout {
 
       this->ticks_per_nanoseconds = static_cast< double >(ticks_to - ticks_from - this->cpuid_overhead) / (static_cast< double >(time_end.tv_sec - time_start.tv_sec) * 1000 * 1000 * 1000 + (time_end.tv_nsec - time_start.tv_nsec));
       this->ticks_origin          = ticks_to;
-      this->cpuid_overhead        = this->cpuid_overhead * 1 / 2;
+      this->cpuid_overhead        = this->cpuid_overhead * 2 / 3;
       std::clog << "done,"
                 << " cpuid overhead: " << this->cpuid_overhead
                 << " ticks origin: " << this->ticks_origin
