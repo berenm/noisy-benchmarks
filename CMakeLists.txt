@@ -72,11 +72,14 @@ add_benchmark(alloc pool LIBRARIES :libtcmalloc.so.4)
 add_plots(alloc pool ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
 
 
+
+
 add_benchmark(hash empty)
 add_plots(hash empty ns-per-iteration STEPS insert remove)
 
 include_directories(bplus-tree-v2/include bplus-tree-v2/src)
-add_benchmark(hash bplus LIBRARIES ${GLIB2_LIBRARIES})
+add_library(bplus-tree STATIC bplus-tree-v2/test/bplus_tree_all.c)
+add_benchmark(hash bplus LIBRARIES bplus-tree ${GLIB2_LIBRARIES})
 add_plots(hash bplus ns-per-iteration STEPS insert remove)
 
 add_benchmark(hash brute)
