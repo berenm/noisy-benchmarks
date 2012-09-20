@@ -91,6 +91,12 @@ add_plots(hash glib ns-per-iteration STEPS insert remove)
 add_benchmark(hash sparse)
 add_plots(hash sparse ns-per-iteration STEPS insert remove)
 
+add_custom_target(plot-hash-comparison
+  COMMAND gnuplot ${PROJECT_SOURCE_DIR}/src/plot/hash-comparison.plot
+)
+add_dependencies(plot-hash-comparison data-hash-bplus data-hash-brute data-hash-glib data-hash-sparse)
+add_dependencies(all-plot plot-hash-comparison)
+
 # build/hash-glib: build
 #   $(CC) src/hashtable.c -o build/hash-glib -Dnoisy_GLIB $(OPTIMIZE) $(LINK) -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT -std=gnu99 -D_NDEBUG `pkg-config --cflags --libs glib-2.0`
 
