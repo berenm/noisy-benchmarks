@@ -1,4 +1,4 @@
-#include "driver/measure-alloc.hpp"
+#include "driver/measure-allocator.hpp"
 
 #define JEMALLOC_NO_DEMANGLE
 #include <jemalloc/jemalloc.h>

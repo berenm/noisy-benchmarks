@@ -1,4 +1,4 @@
-#include "driver/measure-alloc.hpp"
+#include "driver/measure-allocator.hpp"
 
 #include <glib.h>
 

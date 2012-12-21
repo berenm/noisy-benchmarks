@@ -1,4 +1,4 @@
-#include "driver/measure-hash.hpp"
+#include "driver/measure-hashtable.hpp"
 
 namespace shootout {
   namespace test {

@@ -1,4 +1,4 @@
-#include "driver/measure-alloc.hpp"
+#include "driver/measure-allocator.hpp"
 
 extern "C" void* tc_malloc(size_t size);
 extern "C" void  tc_free(void*);

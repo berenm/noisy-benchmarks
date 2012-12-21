@@ -1,4 +1,4 @@
-#include "driver/measure-alloc.hpp"
+#include "driver/measure-allocator.hpp"
 #include "common/probe.hpp"
 
 #include <boost/lexical_cast.hpp>

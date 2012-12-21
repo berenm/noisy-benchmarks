@@ -1,5 +1,9 @@
 include(CMakeParseArguments)
 
+add_custom_target(all-plot)
+add_custom_target(all-data)
+add_dependencies(all-plot all-data)
+
 function(add_benchmark SHOOTOUT_DRIVER_NAME SHOOTOUT_TEST_NAME)
   set(SHOOTOUT_ARGS_FLAGS       )
   set(SHOOTOUT_ARGS_ONE_VALUE   )
@@ -55,6 +59,7 @@ function(add_plot SHOOTOUT_DRIVER_NAME SHOOTOUT_TEST_NAME SHOOTOUT_PLOT_NAME)
       COMMAND sudo nice -n-20 ionice -c1 -n0 taskset -c 1 sudo -u $ENV{USER} LD_PRELOAD=lib/lib${SHOOTOUT_DRIVER_NAME}-${SHOOTOUT_TEST_NAME}.so bin/${SHOOTOUT_EXECUTABLE_NAME} data/${SHOOTOUT_BENCHMARK_NAME} ${SHOOTOUT_ITERATIONS} ${SHOOTOUT_SCENARIO_NAME}
     )
     add_dependencies(${SHOOTOUT_DATA_NAME} ${SHOOTOUT_EXECUTABLE_NAME})
+    add_dependencies(all-data ${SHOOTOUT_DATA_NAME})
   endif()
 
   set(SHOOTOUT_BENCHMARK_NAME  ${SHOOTOUT_BENCHMARK_NAME}${SHOOTOUT_STEP_NAME})

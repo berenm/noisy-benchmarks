@@ -1,5 +1,5 @@
-#ifndef __SHOOTOUT_MEASURE_CALL_HPP__
-#define __SHOOTOUT_MEASURE_CALL_HPP__
+#ifndef __SHOOTOUT_MEASURE_ALLOCATOR_HPP__
+#define __SHOOTOUT_MEASURE_ALLOCATOR_HPP__
 
 #include <cstdlib>
 
@@ -17,4 +17,4 @@ namespace shootout {
   }
 }
 
-#endif // ifndef __SHOOTOUT_MEASURE_CALL_HPP__
+#endif // ifndef __SHOOTOUT_MEASURE_ALLOCATOR_HPP__

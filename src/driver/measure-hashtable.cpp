@@ -1,4 +1,4 @@
-#include "driver/measure-hash.hpp"
+#include "driver/measure-hashtable.hpp"
 #include "common/probe.hpp"
 
 #include <boost/lexical_cast.hpp>

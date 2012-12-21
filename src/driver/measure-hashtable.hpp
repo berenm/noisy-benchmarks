@@ -1,5 +1,5 @@
-#ifndef __SHOOTOUT_MEASURE_HASH_HPP__
-#define __SHOOTOUT_MEASURE_HASH_HPP__
+#ifndef __SHOOTOUT_MEASURE_HASHTABLE_HPP__
+#define __SHOOTOUT_MEASURE_HASHTABLE_HPP__
 
 #include <cstdlib>
 #include <cstdint>
@@ -20,4 +20,4 @@ namespace shootout {
   }
 }
 
-#endif // ifndef __SHOOTOUT_MEASURE_HASH_HPP__
+#endif // ifndef __SHOOTOUT_MEASURE_HASHTABLE_HPP__
