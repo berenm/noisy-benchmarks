@@ -49,53 +49,63 @@ target_link_libraries(noisy-common rt)
 add_benchmark(call empty)
 add_plots(call empty ns-per-iteration)
 
+add_benchmark(trycatch empty)
+add_plots(trycatch empty ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
 
-add_benchmark(alloc empty)
-add_plots(alloc empty ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+add_benchmark(trycatch throwing)
+add_plots(trycatch throwing ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
 
-add_benchmark(alloc malloc)
-add_plots(alloc malloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
-
-add_benchmark(alloc new)
-add_plots(alloc new ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
-
-add_benchmark(alloc gslice LIBRARIES ${GLIB2_LIBRARIES})
-add_plots(alloc gslice ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
-
-add_benchmark(alloc jemalloc LIBRARIES jemalloc)
-add_plots(alloc jemalloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
-
-add_benchmark(alloc tcmalloc LIBRARIES :libtcmalloc.so.4)
-add_plots(alloc tcmalloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
-
-add_benchmark(alloc pool LIBRARIES :libtcmalloc.so.4)
-add_plots(alloc pool ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+add_benchmark(trycatch trying)
+add_plots(trycatch trying ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
 
 
+# add_benchmark(alloc empty)
+# add_plots(alloc empty ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc malloc)
+# add_plots(alloc malloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc new)
+# add_plots(alloc new ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc gslice LIBRARIES ${GLIB2_LIBRARIES})
+# add_plots(alloc gslice ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc jemalloc LIBRARIES jemalloc)
+# add_plots(alloc jemalloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc tcmalloc LIBRARIES :libtcmalloc.so.4)
+# add_plots(alloc tcmalloc ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
+
+# add_benchmark(alloc pool LIBRARIES :libtcmalloc.so.4)
+# add_plots(alloc pool ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
 
 
-add_benchmark(hash empty)
-add_plots(hash empty ns-per-iteration STEPS insert remove)
 
-include_directories(bplus-tree-v2/include bplus-tree-v2/src)
-add_library(bplus-tree STATIC bplus-tree-v2/test/bplus_tree_all.c)
-add_benchmark(hash bplus LIBRARIES bplus-tree ${GLIB2_LIBRARIES})
-add_plots(hash bplus ns-per-iteration STEPS insert remove)
 
-add_benchmark(hash brute)
-add_plots(hash brute ns-per-iteration STEPS insert remove)
+# add_benchmark(hash empty)
+# add_plots(hash empty ns-per-iteration STEPS insert remove)
 
-add_benchmark(hash glib LIBRARIES ${GLIB2_LIBRARIES})
-add_plots(hash glib ns-per-iteration STEPS insert remove)
+# # include_directories(bplus-tree-v2/include bplus-tree-v2/src)
+# # add_library(bplus-tree STATIC bplus-tree-v2/test/bplus_tree_all.c)
+# # add_benchmark(hash bplus LIBRARIES bplus-tree ${GLIB2_LIBRARIES})
+# # add_plots(hash bplus ns-per-iteration STEPS insert remove)
 
-add_benchmark(hash sparse)
-add_plots(hash sparse ns-per-iteration STEPS insert remove)
+# add_benchmark(hash brute)
+# add_plots(hash brute ns-per-iteration STEPS insert remove)
 
-add_custom_target(plot-hash-comparison
-  COMMAND gnuplot ${PROJECT_SOURCE_DIR}/src/plot/hash-comparison.plot
-)
-add_dependencies(plot-hash-comparison data-hash-bplus data-hash-brute data-hash-glib data-hash-sparse)
-add_dependencies(all-plot plot-hash-comparison)
+# add_benchmark(hash glib LIBRARIES ${GLIB2_LIBRARIES})
+# add_plots(hash glib ns-per-iteration STEPS insert remove)
+
+# add_benchmark(hash sparse)
+# add_plots(hash sparse ns-per-iteration STEPS insert remove)
+
+
+# add_custom_target(plot-hash-comparison
+#   COMMAND gnuplot ${PROJECT_SOURCE_DIR}/src/plot/hash-comparison.plot
+# )
+# add_dependencies(plot-hash-comparison data-hash-bplus data-hash-brute data-hash-glib data-hash-sparse)
+# add_dependencies(all-plot plot-hash-comparison)
 
 # build/hash-glib: build
 #   $(CC) src/hashtable.c -o build/hash-glib -Dnoisy_GLIB $(OPTIMIZE) $(LINK) -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT -std=gnu99 -D_NDEBUG `pkg-config --cflags --libs glib-2.0`

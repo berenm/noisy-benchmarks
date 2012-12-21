@@ -12,7 +12,7 @@
 namespace shootout {
   namespace common {
 
-    template< typename ItemType, std::size_t const DesiredItemCount = 2048 >
+    template< typename T, std::size_t const DesiredItemCount = 2048 >
     class ringbuffer {
       protected:
         static std::size_t const try_item_count_order = boost::static_log2< DesiredItemCount >::value;
@@ -26,42 +26,53 @@ namespace shootout {
         typedef std::atomic< position_t >                  atomic_position_t;
 
         struct record_type {
-          ItemType      item;
+          T             value;
           bool volatile valid;
         };
 
         record_type records[item_count];
 
         static position_t const position_mask = position_mask_t::sig_bits_fast;
-        position_t              writer;
-        position_t              reader;
+        position_t volatile     writer;
+        position_t volatile     reader;
 
       public:
         ringbuffer() : writer(0), reader(0) {
           std::memset(records, 0, sizeof(record_type) * item_count);
         }
 
-        inline void push(ItemType const& item) {
-          position_t const write_position = this->writer++ & position_mask;
-          record_type&     write_record   = this->records[write_position];
+        inline void push(T const& value) {
+          position_t const position = __sync_fetch_and_add(&this->writer, 1) & ringbuffer::position_mask;
+          record_type&     record   = this->records[position];
 
-          write_record.item  = item;
-          write_record.valid = 1;
+          // (x86) stores are not reordered with other stores, record WILL be written before valid.
+          record.value = value;
+
+          // however we have to prevent the compiler from reordering the instructions
+          __asm__ __volatile__ ("" ::: "memory");
+
+          record.valid = true;
         }
 
-        inline bool pop(ItemType& item) {
-          position_t const read_position = this->reader & position_mask;
-          record_type&     read_record   = this->records[read_position];
+        inline bool pop(T& value) {
+          position_t const position = this->reader & ringbuffer::position_mask;
+          record_type&     record   = this->records[position];
 
-          if (read_record.valid) {
-            item = read_record.item;
-
-            read_record.valid = false;
-            this->reader++;
-            return true;
-          } else {
+          // (x86) loads are not reordered with other loads, valid WILL be read before record.
+          if (!record.valid) {
             return false;
           }
+
+          // however we have to prevent the compiler from reordering the instructions
+          __asm__ __volatile__ ("" ::: "memory");
+
+          value = record.value;
+
+          // (x86) stores are not reordered with older loads, valid WILL be written after record is read.
+          record.valid = false;
+
+          this->reader++;
+          return true;
         }
 
         inline std::size_t size() { return this->writer - this->reader; }

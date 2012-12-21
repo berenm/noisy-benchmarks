@@ -17,8 +17,10 @@ namespace shootout {
       std::uint32_t cycles_high;
       std::uint32_t cycles_low;
 
+      __asm__ __volatile__ ("" ::: "memory");
       __asm__ __volatile__ ("cpuid" ::: "%rax", "%rbx", "%rcx", "%rdx");
       __asm__ __volatile__ ("rdtsc" : "=&d" (cycles_high), "=&a" (cycles_low));
+      __asm__ __volatile__ ("" ::: "memory");
 
       return (static_cast< std::uint64_t >(cycles_high) << 32) | cycles_low;
     }
@@ -31,8 +33,10 @@ namespace shootout {
       std::uint32_t cycles_high;
       std::uint32_t cycles_low;
 
+      __asm__ __volatile__ ("" ::: "memory");
       __asm__ __volatile__ ("rdtscp" : "=&d" (cycles_high), "=&a" (cycles_low) ::"%rcx");
       __asm__ __volatile__ ("cpuid" ::: "%rax", "%rbx", "%rcx", "%rdx");
+      __asm__ __volatile__ ("" ::: "memory");
 
       return (static_cast< std::uint64_t >(cycles_high) << 32) | cycles_low;
     }
@@ -42,8 +46,10 @@ namespace shootout {
       std::uint32_t cycles_high;
       std::uint32_t cycles_low;
 
+      __asm__ __volatile__ ("" ::: "memory");
       __asm__ __volatile__ ("cpuid" ::: "%rax", "%rbx", "%rcx", "%rdx");
       __asm__ __volatile__ ("rdtsc" : "=&d" (cycles_high), "=&a" (cycles_low));
+      __asm__ __volatile__ ("" ::: "memory");
 
       return (static_cast< std::uint64_t >(cycles_high) << 32) | cycles_low;
     }
