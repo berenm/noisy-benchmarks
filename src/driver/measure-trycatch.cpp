@@ -20,6 +20,9 @@ std::string shootout::common::probe_data::name(std::size_t identifier) {
     case 4:
       return "throw-half-local-try";
 
+    case 5:
+      return "throw-1pct-local-try";
+
     default:
       return "";
   }
@@ -69,6 +72,15 @@ int main(int argc, char const* argv[]) {
     shootout::common::scoped_probe probe(4);
     try {
       shootout::test::trycatch(i > (iterations / 2));
+    } catch (std::runtime_error const& e) {}
+  }
+
+  shootout::common::probe_buffer::instance().flush();
+
+  for (std::size_t i = 0; i < iterations; ++i) {
+    shootout::common::scoped_probe probe(5);
+    try {
+      shootout::test::trycatch(i % 100 == 0);
     } catch (std::runtime_error const& e) {}
   }
 

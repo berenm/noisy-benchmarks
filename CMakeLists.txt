@@ -6,8 +6,8 @@ include(AddBenchmark)
 project(noisy CXX C)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -O3 -Wl,-O1 -flto")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -O3 -Wl,-O1 -flto")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -O3 -Wl,-O1")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -O3 -Wl,-O1")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -g -fwhole-program -Wl,-O1 -flto")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
@@ -25,7 +25,7 @@ link_directories(${Boost_LIBRARY_DIRS} ${GLIB2_LIBRARY_DIRS})
 # noisy
 file(GLOB_RECURSE NOISY_COMMON_SOURCES src/common/*.cpp)
 add_library(noisy-common STATIC ${NOISY_COMMON_SOURCES})
-target_link_libraries(noisy-common rt)
+target_link_libraries(noisy-common boost_system rt)
 
 
 # add_benchmark(call
@@ -49,14 +49,20 @@ add_benchmark(call empty)
 add_plots(call empty ns-per-iteration)
 
 add_benchmark(trycatch empty)
-add_plots(trycatch empty ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
+add_plots(trycatch empty ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try throw-1pct-local-try)
 
 add_benchmark(trycatch throwing)
-add_plots(trycatch throwing ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
+add_plots(trycatch throwing ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try throw-1pct-local-try)
 
 add_benchmark(trycatch trying)
-add_plots(trycatch trying ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try)
+add_plots(trycatch trying ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try throw-1pct-local-try)
 
+add_benchmark(trycatch exceptions)
+add_plots(trycatch exceptions ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try throw-1pct-local-try)
+
+add_benchmark(trycatch no-exceptions)
+add_plots(trycatch no-exceptions ns-per-iteration STEPS no-throw no-throw-global-try no-throw-local-try throw-local-try throw-half-local-try throw-1pct-local-try)
+set_target_properties(trycatch-no-exceptions PROPERTIES COMPILE_FLAGS "-fno-exceptions")
 
 add_benchmark(allocator empty)
 add_plots(allocator empty ns-per-iteration SCENARIOS 16 32 128 256 random STEPS alloc dealloc)
